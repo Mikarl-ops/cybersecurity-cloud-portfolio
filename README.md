@@ -14,6 +14,7 @@ Welcome to my security portfolio! This repository centralizes the documentation,
 ## 🛠️ Technical Skill Matrix
 
 | Category | Tools & Technologies |
+| :--- | :--- |
 | **Security Frameworks:** | NIST CSF, CIA Triad, IAM Best Practices|
 | **Security Operations** | Wireshark, Chronos/SIEM, NIST CSF, Incident Response |
 | **Scripting & Data** | Python (Automation), SQL (Log Analysis), Linux CLI |
