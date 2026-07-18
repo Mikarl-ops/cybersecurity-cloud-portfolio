@@ -1,0 +1,15 @@
+# Local environment variables and secrets
+.env
+*.pem
+*.key
+*.tfstate
+*.tfstate.backup
+credentials.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE specific files
+.vscode/
+.idea/
