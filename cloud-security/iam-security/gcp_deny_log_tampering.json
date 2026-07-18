@@ -1,0 +1,21 @@
+{
+  "bindings": [
+    {
+      "role": "roles/logging.admin",
+      "members": [
+        "group:security-admins@corporate.com"
+      ]
+    },
+    {
+      "role": "roles/viewer",
+      "members": [
+        "user:cloud-engineer@corporate.com"
+      ],
+      "condition": {
+        "title": "Block_Log_Deletion",
+        "description": "Ensure engineers cannot clear operational audit trails.",
+        "expression": "resource.type != 'logging.googleapis.com/LogSink'"
+      }
+    }
+  ]
+}
