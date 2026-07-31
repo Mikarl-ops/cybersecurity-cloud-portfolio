@@ -1,9 +1,13 @@
-# 🔒 Cybersecurity & Cloud Security Portfolio
+# 🔒 Cybersecurity & Cloud Security Engineering Portfolio
 
-![GitHub Repo Size](https://github.com/Mikarl-ops/cybersecurity-cloud-portfolio)
-![GitHub Last Commit](https://github.com/Mikarl-ops/cybersecurity-cloud-portfolio)
+![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Terraform](https://img.shields.io/badge/Terraform-1.0+-844FBA?style=for-the-badge&logo=terraform&logoColor=white)
+![AWS](https://img.shields.io/badge/AWS-Cloud-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)
+![Google Cloud](https://img.shields.io/badge/GCP-Security-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
+![Wireshark](https://img.shields.io/badge/Wireshark-Packet_Analysis-167DA4?style=for-the-badge&logo=wireshark&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/DevSecOps-CI%2FCD-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
 
-Welcome to my security portfolio! This repository centralizes the documentation, automation scripts, and practical lab exercises I've completed across my cybersecurity and cloud security specializations.
+Welcome to my centralized security portfolio. This repository houses technical implementations, automated scripts, cloud infrastructure blueprints, and incident response write-ups covering both **Google Cybersecurity** and **Cloud Security** pathways.
 
 ---
 
@@ -11,18 +15,50 @@ Welcome to my security portfolio! This repository centralizes the documentation,
 * **Google Cybersecurity Professional Certificate** 
 * **Cloud Security Certification** (AWS / Google Cloud / Azure)
 
+---
+
 ## 🛠️ Technical Skill Matrix
 
-| Category | Tools & Technologies |
+| Category | Core Competencies & Technologies |
 | :--- | :--- |
-| **Security Frameworks:** | NIST CSF, CIA Triad, IAM Best Practices|
-| **Security Operations** | Wireshark, Chronos/SIEM, NIST CSF, Incident Response |
-| **Scripting & Data** | Python (Automation), SQL (Log Analysis), Linux CLI |
-| **Cloud Security** | IAM Policy Design, VPC Firewalls, Infrastructure as Code (Terraform) |
-
-## 📁 Repository Map
-* `📂 google-cybersecurity/` — Foundational security principles, network analysis, and Python scripts.
-* `📂 cloud-security/` — Least-privilege IAM architecture, cloud logging, and secure infrastructure.
+| **Security Automation** | Python (`re`, `hmac`, `requests`), Bash Scripting, `iptables` Remediation |
+| **Log & Forensics Audit** | SQL (Data Analysis & Join Queries), Wireshark (`.pcap` Filtering), Network PCAP Analysis |
+| **Cloud Security (AWS/GCP)** | IAM Least-Privilege Design, S3 Bucket Hardening, TLS In-Transit Enforcement |
+| **Infrastructure as Code** | Terraform (Secure VPC Provisioning, Stateful Firewall Rules) |
+| **Application & AI Security** | Anti-CSRF Cryptographic Mitigation, FGSM Adversarial AI Threat Modeling |
+| **DevSecOps Pipeline** | GitHub Actions, SAST Scanning (Bandit for Python, Checkov for IaC) |
 
 ---
-*Maintained by [Mikael](https://github.com/Mikarl-ops/cybersecurity-cloud-portfolio)*
+
+## 📂 Repository Directory Map & Featured Projects
+
+### 🐍 1. Python Security Automation
+* [`📂 Allow List Updater`](./google-cybersecurity/python-automation/) — Automated parser that strips revoked IP permissions from access control files.
+* [`📂 Brute-Force Log Detector`](./google-cybersecurity/python-automation/brute_force_detector/) — Regex log parser isolating failed auth attempts and flagging threshold breaches.
+* [`📂 Active Threat Remediation`](./google-cybersecurity/python-automation/active_threat_mitigation/) — Script that dynamically generates executable Linux `iptables` drop rules from threat feeds.
+
+### 🔍 2. Security Operations, SQL & Network Forensics
+* [`📂 Forensic SQL Queries`](./google-cybersecurity/linux-sql/) — Relational queries used to investigate after-hours unauthorized logins and insider threat activity.
+* [`📂 SQL Privilege Escalation Audit`](./google-cybersecurity/linux-sql/privilege_escalation_audit.sql) — Audit scripts hunting for unauthorized role changes and orphaned terminated employee accounts.
+* [`📂 Wireshark Network Packet Analysis`](./google-cybersecurity/network-security/) — Technical walkthrough isolating a TCP SYN flood attack and unencrypted HTTP POST basic auth payloads.
+* [`📂 DNS Tunneling & Exfiltration Analysis`](./google-cybersecurity/network-security/DNS_EXFILTRATION_README.md) — Case study analyzing Base64 data exfiltration hidden inside UDP Port 53 queries.
+
+### 🌐 3. Web Application & Emerging AI Security
+* [`📂 Anti-CSRF Token Middleware`](./google-cybersecurity/web-security/) — Cryptographically secure token generation and validation middleware in Python/Flask.
+* [`📂 Adversarial AI Threat Model`](./cloud-security/ai-security/) — Mathematical evasion model (FGSM) detailing gradient manipulation attacks and adversarial training defenses.
+
+### ☁️ 4. Cloud Architecture & Infrastructure as Code (IaC)
+* [`📂 Enterprise IAM Policy Library`](./cloud-security/iam-security/) — Multi-cloud JSON policies enforcing IP CIDR locks and mandatory MFA conditions.
+* [`📂 Enforce In-Transit Encryption`](./cloud-security/iam-security/enforce_tls_policy.json) — Zero-trust S3 guardrail policy denying any cleartext HTTP transport requests.
+* [`📂 Secure Terraform VPC Baseline`](./cloud-security/secure-infrastructure/) — IaC module spinning up private network tiers and stateful HTTPS perimeter firewalls.
+
+### ⚙️ 5. DevSecOps & Continuous Integration
+* [`📂 CI/CD Security Pipeline`](./.github/workflows/security_scan.yml) — GitHub Actions pipeline automatically scanning commits with Bandit and Checkov.
+
+---
+
+## 🚀 DevSecOps Pipeline Status
+This repository utilizes automated Static Application Security Testing (SAST). Every code commit triggers an automated pipeline that validates Terraform configurations against CIS benchmarks and parses Python code for security flaws.
+
+---
+*Maintained by **[Mikael/Mikarl]** — Connect with me on [LinkedIn](https://www.linkedin.com/in/mikael-beck-b60999203) or explore my technical write-ups above.*
