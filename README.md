@@ -36,14 +36,14 @@ Welcome to my centralized security portfolio. This repository houses technical i
 * [`📂 Allow List Updater`](./google-cybersecurity/python-automation/) — Automated parser that strips revoked IP permissions from access control files.
 * [`📂 Brute-Force Log Detector`](./google-cybersecurity/python-automation/brute_force_detector/) — Regex log parser isolating failed auth attempts and flagging threshold breaches.
 * [`📂 Active Threat Remediation`](./google-cybersecurity/python-automation/active_threat_mitigation/) — Script that dynamically generates executable Linux `iptables` drop rules from threat feeds.
-* [`📂 google-cybersecurity/python-automation/cve_threat_intel.py`](./google-cybersecurity/python-automation/cve_threat_intel.py) — NVD REST API Vulnerability Ingestion Engine.
+* [`📂 Threat Intelligence API Automation`](./google-cybersecurity/python-automation/cve_threat_intel.py) — NVD REST API Vulnerability Ingestion Engine.
 
 ### 🔍 2. Security Operations, SQL & Network Forensics
 * [`📂 Forensic SQL Queries`](./google-cybersecurity/linux-sql/) — Relational queries used to investigate after-hours unauthorized logins and insider threat activity.
 * [`📂 SQL Privilege Escalation Audit`](./google-cybersecurity/linux-sql/privilege_escalation_audit.sql) — Audit scripts hunting for unauthorized role changes and orphaned terminated employee accounts.
 * [`📂 Wireshark Network Packet Analysis`](./google-cybersecurity/network-security/) — Technical walkthrough isolating a TCP SYN flood attack and unencrypted HTTP POST basic auth payloads.
 * [`📂 DNS Tunneling & Exfiltration Analysis`](./google-cybersecurity/network-security/DNS_EXFILTRATION_README.md) — Case study analyzing Base64 data exfiltration hidden inside UDP Port 53 queries.
-* [`📂 google-cybersecurity/detection-engineering/`](./google-cybersecurity/detection-engineering/) — Vendor-Neutral Detection Rules (`sigma_failed_logins.yml`).
+* [`📂 Detection Engineering Module (Sigma Rule)`](./google-cybersecurity/detection-engineering/) — Vendor-Neutral Detection Rules (`sigma_failed_logins.yml`).
 
 ### 🌐 3. Web Application & Emerging AI Security
 * [`📂 Anti-CSRF Token Middleware`](./google-cybersecurity/web-security/) — Cryptographically secure token generation and validation middleware in Python/Flask.
