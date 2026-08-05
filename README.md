@@ -37,8 +37,10 @@ Welcome to my centralized security portfolio. This repository houses technical i
 * [`📂 Brute-Force Log Detector`](./google-cybersecurity/python-automation/brute_force_detector/) — Regex log parser isolating failed auth attempts and flagging threshold breaches.
 * [`📂 Active Threat Remediation`](./google-cybersecurity/python-automation/active_threat_mitigation/) — Script that dynamically generates executable Linux `iptables` drop rules from threat feeds.
 * [`📂 Threat Intelligence API Automation`](./google-cybersecurity/python-automation/cve_threat_intel.py) — NVD REST API Vulnerability Ingestion Engine.
+* [`📂 Automated SOAR Response Engine`](./cloud-security/automated-response/) — Incident response handler simulating host isolation and IAM credential revocation upon GuardDuty alerts.
 
 ### 🔍 2. Security Operations, SQL & Network Forensics
+* [`📂 Linux System Hardening Audit`](./google-cybersecurity/system-security/) — Bash audit script checking SSH config hardening, open listening ports, and world-writable files.
 * [`📂 Forensic SQL Queries`](./google-cybersecurity/linux-sql/) — Relational queries used to investigate after-hours unauthorized logins and insider threat activity.
 * [`📂 SQL Privilege Escalation Audit`](./google-cybersecurity/linux-sql/privilege_escalation_audit.sql) — Audit scripts hunting for unauthorized role changes and orphaned terminated employee accounts.
 * [`📂 Wireshark Network Packet Analysis`](./google-cybersecurity/network-security/) — Technical walkthrough isolating a TCP SYN flood attack and unencrypted HTTP POST basic auth payloads.
@@ -53,6 +55,7 @@ Welcome to my centralized security portfolio. This repository houses technical i
 * [`📂 Enterprise IAM Policy Library`](./cloud-security/iam-security/) — Multi-cloud JSON policies enforcing IP CIDR locks and mandatory MFA conditions.
 * [`📂 Enforce In-Transit Encryption`](./cloud-security/iam-security/enforce_tls_policy.json) — Zero-trust S3 guardrail policy denying any cleartext HTTP transport requests.
 * [`📂 Secure Terraform VPC Baseline`](./cloud-security/secure-infrastructure/) — IaC module spinning up private network tiers and stateful HTTPS perimeter firewalls.
+* [`📂 Cloud Threat Deception Honeytoken`](./cloud-security/threat-deception/) — Terraform S3 Canary trap paired with EventBridge real-time access alert triggers.
 
 ### ⚙️ 5. DevSecOps & Continuous Integration
 * [`📂 CI/CD Security Pipeline`](./.github/workflows/security_scan.yml) — GitHub Actions pipeline automatically scanning commits with Bandit and Checkov.
