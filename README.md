@@ -33,7 +33,7 @@ Welcome to my centralized security portfolio. This repository houses technical i
 ## 📂 Repository Directory Map & Featured Projects
 
 ### 🐍 1. Python Security Automation
-* [`📂 Allow List Updater`](./google-cybersecurity/python-automation/) — Automated parser that strips revoked IP permissions from access control files.
+* [`📂 Allow List Updater`](./google-cybersecurity/python-automation/Automated Log File Access) — Automated parser that strips revoked IP permissions from access control files.
 * [`📂 Brute-Force Log Detector`](./google-cybersecurity/python-automation/brute_force_detector/) — Regex log parser isolating failed auth attempts and flagging threshold breaches.
 * [`📂 Active Threat Remediation`](./google-cybersecurity/python-automation/active_threat_mitigation/) — Script that dynamically generates executable Linux `iptables` drop rules from threat feeds.
 * [`📂 Threat Intelligence API Automation`](./google-cybersecurity/python-automation/cve_threat_intel.py) — NVD REST API Vulnerability Ingestion Engine.
