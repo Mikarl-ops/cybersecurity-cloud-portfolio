@@ -1,0 +1,32 @@
+# ==============================================================================
+# File: .gitleaks.toml
+# Description: Custom Gitleaks configuration enforcing static secret analysis.
+# ==============================================================================
+
+[config]
+description = "Security Portfolio Custom Secret Prevention Baseline"
+
+[[rules]]
+id = "aws-access-token"
+description = "Identified an unencrypted AWS Access Key ID"
+regex = '''(?i)(A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}'''
+tags = ["key", "AWS"]
+
+[[rules]]
+id = "private-key"
+description = "Identified an unencrypted Private Key"
+regex = '''(?i)-----BEGIN[ A-Z0-9_-]*PRIVATE KEY-----'''
+tags = ["key", "RSA"]
+
+[[rules]]
+id = "generic-api-key"
+description = "Identified a generic high-entropy API key string"
+regex = '''(?i)(api_key|apikey|secret|password|auth_token)\s*[:=]\s*["']([A-Za-z0-9_~\-]{16,})["']'''
+tags = ["key", "Generic"]
+
+[allowlist]
+description = "Ignore sample mock files used in defensive demonstration scripts"
+paths = [
+    '''cloud-security/threat-deception/canary_s3_bucket.tf''',
+    '''google-cybersecurity/python-automation/active_threat_mitigation/'''
+]
