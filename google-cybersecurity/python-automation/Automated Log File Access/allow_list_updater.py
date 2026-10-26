@@ -1,39 +1,31 @@
-"""
-Filename: allow_list_updater.py
-Description: Automatically updates a network access control 'allow list' by 
-             removing specified malicious or revoked IP addresses.
-"""
+"""Create a filtered copy of an allow-list without modifying the source."""
 
-def update_allow_list(import_file, remove_list):
-    # 1. Open the file and read the current allowed IPs
-    with open(import_file, "r") as file:
-        current_allow_list = file.read()
+import argparse
+from pathlib import Path
 
-    # 2. Convert the string of IPs into a clean Python list
-    ip_list = current_allow_list.split()
 
-    # 3. Iterate through the removal list and strip out banned IPs
-    for ip in remove_list:
-        if ip in ip_list:
-            ip_list.remove(ip)
-            print(f"[REMOVED] Revoked IP {ip} has been removed from the allow list.")
-        else:
-            print(f"[INFO] IP {ip} was not found in the active allow list.")
+def update_allow_list(import_file, remove_list, output_file):
+    """Write a copy with revoked entries removed and return the removed entries."""
+    current_allow_list = Path(import_file).read_text(encoding="utf-8").split()
+    remove_set = set(remove_list)
+    removed = [address for address in current_allow_list if address in remove_set]
+    updated = [address for address in current_allow_list if address not in remove_set]
+    content = "\n".join(updated)
+    if content:
+        content += "\n"
+    Path(output_file).write_text(content, encoding="utf-8")
+    return removed
 
-    # 4. Re-format the list back into a single string with newlines
-    updated_allow_list = "\n".join(ip_list)
 
-    # 5. Overwrite the original file with the newly secured list
-    with open(import_file, "w") as file:
-        file.write(updated_allow_list)
-        
-    print("\n[SUCCESS] The allow list file has been successfully updated.")
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("input_file", help="Source allow-list; it is left unchanged")
+    parser.add_argument("output_file", help="Path for the filtered copy")
+    parser.add_argument("--remove", nargs="+", required=True, help="One or more entries to remove")
+    args = parser.parse_args()
+    removed = update_allow_list(args.input_file, args.remove, args.output_file)
+    print(f"Wrote filtered allow-list to {args.output_file}; removed {len(removed)} entr(y/ies).")
 
-# --- Execution Block ---
+
 if __name__ == "__main__":
-    # Define the target file and the IPs flagged for removal
-    target_file = "allow_list.txt"
-    banned_ips = ["192.168.1.50", "10.0.0.22", "8.8.8.8"]  # Note: 8.8.8.8 is a test case not in the list
-
-    print(f"Starting security sweep on {target_file}...\n")
-    update_allow_list(target_file, banned_ips)
+    main()

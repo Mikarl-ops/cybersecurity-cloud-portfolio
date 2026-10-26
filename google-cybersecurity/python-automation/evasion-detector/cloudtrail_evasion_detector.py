@@ -1,71 +1,69 @@
-"""
-Filename: cloudtrail_evasion_detector.py
-Description: Parses raw AWS CloudTrail JSON log streams to flag critical defense 
-             evasion events, such as unauthorized log disabling or trail deletion.
-Focus: Automated detection of adversary persistence and defense evasion tactics, specifically targeting API calls that stop logging (StopLogging) or delete audit trails (DeleteTrail).
-"""
+"""Find CloudTrail events that may indicate an attempt to impair logging."""
 
 import json
 import logging
+from pathlib import Path
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - [%(levelname)s] - %(message)s")
 
-# MITRE ATT&CK T1562.002: Impair Defenses - Disable Cloud Logs
 EVASION_EVENT_NAMES = {
-    "StopLogging": "CRITICAL: CloudTrail logging was suspended!",
-    "DeleteTrail": "CRITICAL: A CloudTrail audit log stream was deleted!",
-    "UpdateTrail": "WARNING: CloudTrail configuration was modified.",
-    "PutEventSelectors": "WARNING: Event selectors modified (potential log suppression)."
+    "StopLogging": "CloudTrail logging was suspended",
+    "DeleteTrail": "A CloudTrail trail was deleted",
+    "UpdateTrail": "CloudTrail configuration was modified",
+    "PutEventSelectors": "CloudTrail event selectors were modified",
 }
 
-# Function to analyze CloudTrail logs for defense evasion attempts
+
 def analyze_cloudtrail_log(json_filepath):
-    logging.info(f"[*] Ingesting CloudTrail event stream from: {json_filepath}...")
-
-    # Parse the JSON log file and check for defense evasion events
+    """Return normalized findings from a CloudTrail JSON file."""
     try:
-        with open(json_filepath, 'r') as log_file:
-            data = json.load(log_file)
-            records = data.get("Records", [])
-            
-            evasion_count = 0
-            for record in records:
-                event_name = record.get("eventName")
-                event_source = record.get("eventSource")
-                user_identity = record.get("userIdentity", {}).get("arn", "Unknown-ARN")
-                source_ip = record.get("sourceIPAddress", "Unknown-IP")
-
-                # Check for defense evasion events based on MITRE ATT&CK T1562.002
-                if event_source == "cloudtrail.amazonaws.com" and event_name in EVASION_EVENT_NAMES:
-                    evasion_count += 1
-                    alert_msg = EVASION_EVENT_NAMES[event_name]
-                    logging.error(f"[DEFENSE EVASION DETECTED] {alert_msg}")
-                    logging.error(f" -> User: {user_identity} | IP: {source_ip} | Action: {event_name}")
-                    
-            if evasion_count == 0:
-                logging.info("[+] No defense evasion signatures detected in log batch.")
-                
+        data = json.loads(Path(json_filepath).read_text(encoding="utf-8"))
     except FileNotFoundError:
-        logging.error(f"[ERROR] Could not locate file: {json_filepath}")
+        logging.error("Could not locate file: %s", json_filepath)
+        return []
     except json.JSONDecodeError:
-        logging.error("[ERROR] Invalid JSON payload format.")
+        logging.error("Invalid JSON payload format in %s", json_filepath)
+        return []
+
+    records = data.get("Records", []) if isinstance(data, dict) else []
+    if not isinstance(records, list):
+        logging.error("CloudTrail Records must be a list")
+        return []
+
+    findings = []
+    for record in records:
+        if not isinstance(record, dict):
+            continue
+        event_name = record.get("eventName")
+        if record.get("eventSource") != "cloudtrail.amazonaws.com" or event_name not in EVASION_EVENT_NAMES:
+            continue
+        identity = record.get("userIdentity")
+        identity = identity if isinstance(identity, dict) else {}
+        findings.append({
+            "event_time": record.get("eventTime"),
+            "event_name": event_name,
+            "description": EVASION_EVENT_NAMES[event_name],
+            "user_arn": identity.get("arn", "Unknown-ARN"),
+            "source_ip": record.get("sourceIPAddress", "Unknown-IP"),
+        })
+    return findings
+
+
+def main():
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("cloudtrail_json", help="Path to a CloudTrail JSON event file")
+    args = parser.parse_args()
+    findings = analyze_cloudtrail_log(args.cloudtrail_json)
+    for finding in findings:
+        logging.warning(
+            "%s: %s user=%s source_ip=%s",
+            finding["event_name"], finding["description"],
+            finding["user_arn"], finding["source_ip"],
+        )
+    logging.info("Analysis complete: %s finding(s)", len(findings))
+
 
 if __name__ == "__main__":
-    # Create a simulated CloudTrail log payload containing a defense evasion attack
-    sample_log = "cloudtrail_sample.json"
-    simulated_payload = {
-        "Records": [
-            {
-                "eventTime": "2026-08-05T12:00:00Z",
-                "eventSource": "cloudtrail.amazonaws.com",
-                "eventName": "StopLogging",
-                "userIdentity": {"arn": "arn:aws:iam::123456789012:user/attacker_compromised"},
-                "sourceIPAddress": "198.51.100.45"
-            }
-        ]
-    }
-    
-    with open(sample_log, "w") as f:
-        json.dump(simulated_payload, f)
-        
-    analyze_cloudtrail_log(sample_log)
+    main()

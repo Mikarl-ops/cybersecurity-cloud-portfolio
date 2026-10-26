@@ -1,10 +1,7 @@
-# Web Application Security: CSRF Mitigation
+# Flask CSRF protection demonstration
 
-## 📋 Project Overview
-This project demonstrates the cryptographic implementation of Cross-Site Request Forgery (CSRF) protections within a Python backend, ensuring state-changing operations are strictly authenticated.
+This small Flask app demonstrates a synchronizer-token pattern. A same-origin client retrieves a token from /api/csrf-token and sends it in the X-CSRFToken header on state-changing requests. The comparison uses hmac.compare_digest. Session cookies are HttpOnly and SameSite=Lax; Secure cookies are enabled by default.
 
-## 🛠️ STAR Analysis
-* **Situation:** Attackers leverage authenticated user sessions to trick browsers into executing malicious state-changing requests (e.g., fund transfers) without the user's knowledge.
-* **Task:** Implement a defense mechanism that forces the client to prove the request was intentionally initiated from the legitimate frontend interface.
-* **Action:** Built a Python application that generates a unique, cryptographically secure string (`os.urandom`) upon session creation. The application is configured to require this token to be transmitted back via a custom HTTP header (`X-CSRFToken`) for all `POST`/`PUT` requests. Validation utilizes `hmac.compare_digest` to mitigate timing attack vulnerabilities.
-* **Result:** Effectively neutralized CSRF vectors by decoupling authentication (cookies) from authorization (the anti-CSRF token).
+Set FLASK_SECRET_KEY to a locally generated secret before starting the app, then run csrf_protection.py with Python. For local HTTP development only, use create_app with secure_cookies=False from a development runner. Do not put a production secret in source control. Run the repository tests with python -m unittest discover -s tests -v.
+
+This example is not a complete production security configuration. Add origin checks, HTTPS, secret rotation, rate limiting, input validation, and framework-level security review before adapting it to a real application.

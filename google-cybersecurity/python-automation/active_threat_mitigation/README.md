@@ -1,10 +1,9 @@
-# Project Variation: Automated Firewall Rule Generator
+# Validated firewall rule generator
 
-## 📋 Project Overview
-This project expands on log monitoring by building an automated remediation tool. The Python script ingests a threat feed of malicious IP addresses and automatically constructs an executable Linux bash script containing `iptables` rules to immediately block inbound traffic from those vectors.
+This demo reads one IPv4 or IPv6 address per line, validates the complete feed, removes duplicate addresses, and writes a shell script with idempotent iptables or ip6tables rules. It never executes the generated script. Invalid input stops generation before the output file is changed.
 
-## 🛠️ STAR Analysis
-* **Situation:** During an active distributed denial-of-service (DDoS) or brute-force campaign, manually typing firewall rules into the command line to block hundreds of IP addresses is too slow to prevent system degradation.
-* **Task:** Build an automated ingestion script that translates plain-text lists of attacker IP addresses into standardized Linux kernel firewall commands.
-* **Action:** Utilized Python file I/O operations and string formatting to dynamically wrap isolated IP strings into executable syntax (`iptables -A INPUT -s <IP> -j DROP`), outputting a ready-to-run `.sh` remediation script.
-* **Result:** Reduced the mean time to remediate (MTTR) active perimeter threats from hours of manual entry to seconds of automated rule execution.
+Run from the repository root with Python:
+
+    python google-cybersecurity/python-automation/active_threat_mitigation/firewall_rule_generator.py google-cybersecurity/python-automation/active_threat_mitigation/threat_feed.sample.txt generated-block-rules.sh
+
+The sample feed uses documentation-only IP ranges. Review generated commands and adapt them to the host firewall before use.

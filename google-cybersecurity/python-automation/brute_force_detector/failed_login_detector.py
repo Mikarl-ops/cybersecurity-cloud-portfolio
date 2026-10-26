@@ -1,46 +1,64 @@
-"""
-Filename: failed_login_detector.py
-Description: Parses server authentication logs using Regular Expressions (regex)
-             to identify potential brute-force attacks by flagging IP addresses 
-             with excessive failed login attempts.
-"""
+"""Detect per-source failed-login bursts in timestamped authentication logs."""
 
+import ipaddress
 import re
+from collections import defaultdict
+from datetime import datetime, timedelta
 
-def detect_brute_force(log_file, threshold=5):
-    # Dictionary to keep track of { "IP_Address": failed_count }
-    failed_attempts = {}
-    
-    # Regex pattern to match standard IPv4 addresses
-    ip_pattern = r"\b(?:\d{1,3}\.){3}\d{1,3}\b"
-    
-    print(f"[*] Analyzing {log_file} for indicators of compromise (IoCs)...")
-    
-    with open(log_file, "r") as file:
-        for line in file:
-            # Check if the log line contains a failed login indicator
-            if "Failed login attempt" in line:
-                # Find the IP address in that specific line using regex
-                match = re.search(ip_pattern, line)
-                if match:
-                    ip = match.group()
-                    # Increment the counter for this specific IP address
-                    failed_attempts[ip] = failed_attempts.get(ip, 0) + 1
+LOG_PATTERN = re.compile(
+    r"^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).*"
+    r"Failed login attempt from (?P<ip>(?:\d{1,3}\.){3}\d{1,3})\b"
+)
 
-    # Evaluate the results and trigger alerts for IPs crossing our threshold
-    alerts_triggered = 0
-    print("\n--- [SECURITY ALERTS] ---")
-    for ip, count in failed_attempts.items():
-        if count >= threshold:
-            print(f"[ALERT] Potential Brute-Force Attack Detected!")
-            print(f"        Source IP: {ip}")
-            print(f"        Total Failed Attempts: {count}\n")
-            alerts_triggered += 1
-            
-    if alerts_triggered == 0:
-        print("[INFO] Security sweep complete. No brute-force signatures detected.")
+
+def detect_brute_force(log_file, threshold=5, window_seconds=300):
+    """Return IPs whose failed-login count reaches threshold within the time window."""
+    if threshold < 1 or window_seconds < 1:
+        raise ValueError("threshold and window_seconds must be positive")
+
+    timestamps_by_ip = defaultdict(list)
+    with open(log_file, "r", encoding="utf-8") as source:
+        for line in source:
+            match = LOG_PATTERN.search(line)
+            if not match:
+                continue
+            try:
+                address = str(ipaddress.ip_address(match.group("ip")))
+                timestamp = datetime.strptime(match.group("timestamp"), "%Y-%m-%d %H:%M:%S")
+            except ValueError:
+                continue
+            timestamps_by_ip[address].append(timestamp)
+
+    alerts = {}
+    window = timedelta(seconds=window_seconds)
+    for address, timestamps in timestamps_by_ip.items():
+        timestamps.sort()
+        left = 0
+        max_count = 0
+        for right, timestamp in enumerate(timestamps):
+            while timestamp - timestamps[left] > window:
+                left += 1
+            max_count = max(max_count, right - left + 1)
+        if max_count >= threshold:
+            alerts[address] = max_count
+    return alerts
+
+
+def main():
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("log_file", nargs="?", default="server_auth.log")
+    parser.add_argument("--threshold", type=int, default=5)
+    parser.add_argument("--window-seconds", type=int, default=300)
+    args = parser.parse_args()
+    alerts = detect_brute_force(args.log_file, args.threshold, args.window_seconds)
+    if not alerts:
+        print("No failed-login burst exceeded the configured threshold.")
+        return
+    for address, count in sorted(alerts.items()):
+        print(f"ALERT: {address} had {count} failures within {args.window_seconds} seconds")
+
 
 if __name__ == "__main__":
-    # Target our log file and set a threshold of 5 failed attempts
-    target_log = "server_auth.log"
-    detect_brute_force(target_log, threshold=5)
+    main()

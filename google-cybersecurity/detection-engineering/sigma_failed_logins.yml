@@ -1,18 +1,19 @@
-title: Detect Rapid Failed SSH Logins (Brute Force)
+title: Detect Rapid Failed Linux SSH Logins
 id: 5d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5a
 status: experimental
-description: Detects multiple failed SSH authentication attempts from a single source IP within a short timeframe.
-author: Security Portfolio
-date: 2026/08/01
+description: Detect multiple failed SSH authentication attempts from one source within a short timeframe.
+author: Mikael Beck
+date: 2026/10/26
 logsource:
-  category: authentication
   product: linux
+  service: sshd
 detection:
   selection:
-    EventID: 4625
-    Service: sshd
+    message|contains:
+      - "Failed password for"
+      - "Invalid user"
   timeframe: 5m
-  condition: selection | count() by SourceIP > 5
+  condition: selection | count() by SourceIp > 5
 falsepositives:
   - Misconfigured automated scripts or deployment keys
 level: high

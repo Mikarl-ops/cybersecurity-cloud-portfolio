@@ -1,15 +1,23 @@
-# Local environment variables and secrets
+# Local environments and test artifacts
 .env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Credentials and generated state
 *.pem
 *.key
 *.tfstate
 *.tfstate.backup
 credentials.json
 
-# OS files
+# OS and IDE files
 .DS_Store
 Thumbs.db
-
-# IDE specific files
 .vscode/
 .idea/

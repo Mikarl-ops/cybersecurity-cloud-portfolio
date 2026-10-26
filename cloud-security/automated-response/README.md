@@ -1,10 +1,13 @@
-# Project: Automated Incident Response (SOAR Engine)
+# GuardDuty response simulation
 
-## 📋 Project Overview
-This project presents an automated Incident Response pipeline using Python. It simulates real-time containment actions—such as network host quarantine and IAM session revocation—driven by high-severity AWS GuardDuty alerts.
+## Purpose
 
-## 🛠️ STAR Analysis
-* **Situation:** Manual incident response workflows take an average of 30+ minutes from alert generation to containment, leaving a wide window for data exfiltration.
-* **Task:** Build an automated response function that parses threat alerts and instantly executes containment policies against affected cloud resources.
-* **Action:** Authored a Python automation handler designed to evaluate GuardDuty JSON event payloads. Programmed conditional logic that automatically isolates compromised EC2 instances behind a quarantine Security Group and applies inline `DenyAll` policies to compromised IAM identities.
-* **Result:** Reduced containment response time from minutes to milliseconds, eliminating human delay during critical off-hours incidents.
+This small Python example reads the severity and resource type from a GuardDuty-style event and logs a proposed response for selected high-severity EC2 or IAM findings.
+
+## Current behavior
+
+The functions only log simulated actions and return success. They do not call AWS, isolate an instance, revoke credentials, publish an alert, or measure response time. The included sample event is synthetic. Treat the code as a response-planning demonstration, not an operational SOAR integration.
+
+## Next steps
+
+A fuller lab could add typed event fixtures, a dry-run response plan, unit tests for supported event types, and a separately permissioned AWS adapter. Any live containment action should have explicit scope, audit logging, and a rollback procedure.

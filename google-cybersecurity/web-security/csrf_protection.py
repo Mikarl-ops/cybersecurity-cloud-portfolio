@@ -1,46 +1,53 @@
-"""
-Filename: csrf_protection.py
-Description: A demonstration of generating, transmitting, and validating secure 
-             CSRF tokens in a web application using Python and Flask to prevent 
-             state-changing attacks.
-"""
+"""Small Flask demonstration of synchronizer-token CSRF protection."""
 
-from flask import Flask, request, session, abort
-import os
 import hmac
+import os
+import secrets
 
-app = Flask(__name__)
-# In production, this secret key must be stored in an environment variable
-app.secret_key = os.urandom(24)
+from flask import Flask, abort, jsonify, request, session
 
-def generate_csrf_token():
-    """Generates a cryptographically secure token and stores it in the user's session."""
-    if '_csrf_token' not in session:
-        session['_csrf_token'] = os.urandom(24).hex()
-    return session['_csrf_token']
 
-@app.before_request
-def csrf_protect():
-    """Intercepts incoming state-changing requests to validate the token transmission."""
-    if request.method in ["POST", "PUT", "DELETE"]:
-        # Extract the token transmitted via the custom HTTP header
-        token = request.headers.get('X-CSRFToken')
-        if not token:
-            abort(403, description="CSRF token missing from request headers.")
-            
-        # Use hmac.compare_digest to prevent timing attacks during validation
-        if not hmac.compare_digest(token, session.get('_csrf_token', '')):
-            abort(403, description="Invalid CSRF token detected.")
+def create_app(secret_key=None, secure_cookies=True):
+    key = secret_key or os.environ.get("FLASK_SECRET_KEY")
+    if not key:
+        raise RuntimeError("Set FLASK_SECRET_KEY before starting the application")
 
-@app.route("/api/transfer-funds", methods=["POST"])
-def transfer_funds():
-    """A simulated sensitive endpoint protected by the before_request token check."""
-    amount = request.form.get("amount")
-    return f"Success: Securely transferred ${amount}. Request authenticated."
+    app = Flask(__name__)
+    app.config.update(
+        SECRET_KEY=key,
+        SESSION_COOKIE_HTTPONLY=True,
+        SESSION_COOKIE_SAMESITE="Lax",
+        SESSION_COOKIE_SECURE=secure_cookies,
+    )
+
+    @app.get("/api/csrf-token")
+    def get_csrf_token():
+        token = session.get("_csrf_token")
+        if token is None:
+            token = secrets.token_urlsafe(32)
+            session["_csrf_token"] = token
+        response = jsonify(csrf_token=token)
+        response.headers["Cache-Control"] = "no-store"
+        return response
+
+    @app.before_request
+    def csrf_protect():
+        if request.method not in {"POST", "PUT", "PATCH", "DELETE"}:
+            return
+        token = request.headers.get("X-CSRFToken", "")
+        expected = session.get("_csrf_token", "")
+        if not token or not expected or not hmac.compare_digest(token, expected):
+            abort(403, description="Missing or invalid CSRF token")
+
+    @app.post("/api/transfer-funds")
+    def transfer_funds():
+        amount = request.form.get("amount", "")
+        if not amount:
+            abort(400, description="amount is required")
+        return jsonify(status="accepted", amount=amount)
+
+    return app
+
 
 if __name__ == "__main__":
-    print("[*] Starting secure web application with CSRF protection enabled...")
-    # Generate a dummy token to show how it would be injected into the front-end
-    with app.test_request_context():
-        session['_csrf_token'] = os.urandom(24).hex()
-        print(f"[+] Example token transmitted to client: {session['_csrf_token']}")
+    create_app().run()

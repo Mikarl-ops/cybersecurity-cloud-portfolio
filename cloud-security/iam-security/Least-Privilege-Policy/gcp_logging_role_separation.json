@@ -1,0 +1,16 @@
+{
+  "bindings": [
+    {
+      "role": "roles/logging.admin",
+      "members": [
+        "group:security-admins@example.com"
+      ]
+    },
+    {
+      "role": "roles/logging.viewer",
+      "members": [
+        "user:cloud-engineer@example.com"
+      ]
+    }
+  ]
+}

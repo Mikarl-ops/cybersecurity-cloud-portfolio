@@ -1,72 +1,41 @@
-# 🔒 Cybersecurity & Cloud Security Engineering Portfolio
+# Cybersecurity & Cloud Security Portfolio
 
-![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Terraform](https://img.shields.io/badge/Terraform-1.0+-844FBA?style=for-the-badge&logo=terraform&logoColor=white)
-![AWS](https://img.shields.io/badge/AWS-Cloud-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)
-![Google Cloud](https://img.shields.io/badge/GCP-Security-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
-![Wireshark](https://img.shields.io/badge/Wireshark-Packet_Analysis-167DA4?style=for-the-badge&logo=wireshark&logoColor=white)
-![GitHub Actions](https://img.shields.io/badge/DevSecOps-CI%2FCD-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
+A portfolio of security automation, detection, incident response, cloud controls, and infrastructure security examples. Projects are labelled by what currently exists so readers can distinguish runnable demonstrations from written case studies and configuration templates.
 
-Welcome to my centralized security portfolio. This repository houses technical implementations, automated scripts, cloud infrastructure blueprints, and incident response write-ups covering both **Google Cybersecurity** and **Cloud Security** pathways.
+## Featured projects
 
----
+| Area | Project | Status and scope |
+| --- | --- | --- |
+| Python automation | [Allow list updater](./google-cybersecurity/python-automation/Automated%20Log%20File%20Access/) | Runnable local file-processing demo |
+| Python automation | [Brute-force detector](./google-cybersecurity/python-automation/brute_force_detector/) | Runnable log analysis demo with a five-minute threshold |
+| Python automation | [Firewall rule generator](./google-cybersecurity/python-automation/active_threat_mitigation/) | Validates IP input and writes a reviewable shell script; it never applies rules |
+| Threat intelligence | [NVD CVE lookup](./google-cybersecurity/python-automation/Threat_intelligence_API_automation/) | Calls the public NVD API; requires network access |
+| Cloud detection | [CloudTrail evasion detector](./google-cybersecurity/python-automation/evasion-detector/) | Parses CloudTrail JSON and returns matching findings |
+| Incident response | [GuardDuty response simulation](./cloud-security/automated-response/) | Simulates response planning; makes no AWS API calls |
+| Linux security | [Linux hardening audit](./google-cybersecurity/system-security/) | Read-only checks for selected SSH settings, listening ports, and temporary files |
+| SQL investigation | [Login and privilege audit queries](./google-cybersecurity/linux-sql/) | Query examples; adapt table and field names to your dataset |
+| Network forensics | [Wireshark investigation walkthrough](./google-cybersecurity/network-security/) | Written example only; the repository does not include a packet capture |
+| Detection engineering | [Linux SSH failed-login Sigma rule](./google-cybersecurity/detection-engineering/) | Rule example; field mapping depends on the log source |
+| Web security | [CSRF protection demo](./google-cybersecurity/web-security/) | Small Flask example with a token endpoint and tests |
+| Cloud IAM | [AWS and GCP policy examples](./cloud-security/iam-security/) | Illustrative policies using placeholder identities and resources |
+| Infrastructure as code | [AWS network baseline](./cloud-security/secure-infrastructure/) | Terraform configuration for a VPC, subnet, and security group; no workload is deployed |
+| Threat deception | [S3 canary alert example](./cloud-security/threat-deception/) | Terraform example; requires CloudTrail S3 data events for object-access visibility |
+| Container security | [Kubernetes network policies](./cloud-security/container-security/) | Example default-deny and database-ingress policies |
+| DevSecOps | [GitHub Actions security workflow](./.github/workflows/security_scan.yml) | Runs tests and security/configuration scans |
 
-## 🏅 Certifications & Pathways
-* **Google Cybersecurity Professional Certificate** 
-* **Cloud Security Certification** (AWS / Google Cloud / Azure)
+## Run the Python demos
 
----
+Use Python 3.11 or newer. Install the demo and development dependencies with **pip install -r requirements-dev.txt**. Run the local test suite from the repository root with **python -m unittest discover -s tests -v**.
 
-## 🛠️ Technical Skill Matrix
+The firewall generator takes an IP feed and an output path. It validates the full feed before writing a script. Review generated rules before applying them to any system. The NVD lookup calls an external service; the other included Python examples can be run with local files and sample data.
 
-| Category | Core Competencies & Technologies |
-| :--- | :--- |
-| **Security Automation** | Python (`re`, `hmac`, `requests`), Bash Scripting, `iptables` Remediation |
-| **Log & Forensics Audit** | SQL (Data Analysis & Join Queries), Wireshark (`.pcap` Filtering), Network PCAP Analysis |
-| **Cloud Security (AWS/GCP)** | IAM Least-Privilege Design, S3 Bucket Hardening, TLS In-Transit Enforcement |
-| **Infrastructure as Code** | Terraform (Secure VPC Provisioning, Stateful Firewall Rules) |
-| **Application & AI Security** | Anti-CSRF Cryptographic Mitigation, FGSM Adversarial AI Threat Modeling |
-| **DevSecOps Pipeline** | GitHub Actions, SAST Scanning (Bandit for Python, Checkov for IaC) |
+## How to read the project claims
 
----
+Examples use synthetic records and documentation-only IP ranges. AWS and GCP policies are templates, not account-specific recommendations. The GuardDuty handler is a simulation, the network forensics project is a walkthrough without a PCAP, and the Terraform projects have not been deployed as production infrastructure. Project write-ups describe intended use and current limitations; performance or security outcomes are not claimed unless backed by measurements in the repository.
 
-## 📂 Repository Directory Map & Featured Projects
+## CI
 
-### 🐍 1. Python Security Automation
-* [`📂 Allow List Updater`](./google-cybersecurity/python-automation/Automated Log File Access) — Automated parser that strips revoked IP permissions from access control files.
-* [`📂 Brute-Force Log Detector`](./google-cybersecurity/python-automation/brute_force_detector/) — Regex log parser isolating failed auth attempts and flagging threshold breaches.
-* [`📂 Active Threat Remediation`](./google-cybersecurity/python-automation/active_threat_mitigation/) — Script that dynamically generates executable Linux `iptables` drop rules from threat feeds.
-* [`📂 Threat Intelligence API Automation`](./google-cybersecurity/python-automation/cve_threat_intel.py) — NVD REST API Vulnerability Ingestion Engine.
-* [`📂 Automated SOAR Response Engine`](./cloud-security/automated-response/) — Incident response handler simulating host isolation and IAM credential revocation upon GuardDuty alerts.
-* [`📂 CloudTrail Defense Evasion Detector`](./google-cybersecurity/python-automation/cloudtrail_evasion_detector.py) — DFIR script analyzing CloudTrail JSON logs for logging suspension or trail deletion events.
-
-### 🔍 2. Security Operations, SQL & Network Forensics
-* [`📂 Linux System Hardening Audit`](./google-cybersecurity/system-security/) — Bash audit script checking SSH config hardening, open listening ports, and world-writable files.
-* [`📂 Forensic SQL Queries`](./google-cybersecurity/linux-sql/) — Relational queries used to investigate after-hours unauthorized logins and insider threat activity.
-* [`📂 SQL Privilege Escalation Audit`](./google-cybersecurity/linux-sql/privilege_escalation_audit.sql) — Audit scripts hunting for unauthorized role changes and orphaned terminated employee accounts.
-* [`📂 Wireshark Network Packet Analysis`](./google-cybersecurity/network-security/) — Technical walkthrough isolating a TCP SYN flood attack and unencrypted HTTP POST basic auth payloads.
-* [`📂 DNS Tunneling & Exfiltration Analysis`](./google-cybersecurity/network-security/DNS_EXFILTRATION_README.md) — Case study analyzing Base64 data exfiltration hidden inside UDP Port 53 queries.
-* [`📂 Detection Engineering Module (Sigma Rule)`](./google-cybersecurity/detection-engineering/) — Vendor-Neutral Detection Rules (`sigma_failed_logins.yml`).
-
-### 🌐 3. Web Application & Emerging AI Security
-* [`📂 Anti-CSRF Token Middleware`](./google-cybersecurity/web-security/) — Cryptographically secure token generation and validation middleware in Python/Flask.
-* [`📂 Adversarial AI Threat Model`](./cloud-security/ai-security/) — Mathematical evasion model (FGSM) detailing gradient manipulation attacks and adversarial training defenses.
-
-### ☁️ 4. Cloud Architecture & Infrastructure as Code (IaC)
-* [`📂 Enterprise IAM Policy Library`](./cloud-security/iam-security/) — Multi-cloud JSON policies enforcing IP CIDR locks and mandatory MFA conditions.
-* [`📂 Enforce In-Transit Encryption`](./cloud-security/iam-security/enforce_tls_policy.json) — Zero-trust S3 guardrail policy denying any cleartext HTTP transport requests.
-* [`📂 Secure Terraform VPC Baseline`](./cloud-security/secure-infrastructure/) — IaC module spinning up private network tiers and stateful HTTPS perimeter firewalls.
-* [`📂 Cloud Threat Deception Honeytoken`](./cloud-security/threat-deception/) — Terraform S3 Canary trap paired with EventBridge real-time access alert triggers.
-* [`📂 Kubernetes Zero-Trust Network Policy`](./cloud-security/container-security/) — Declarative manifests enforcing default-deny microservice isolation across cluster namespaces.
-
-### ⚙️ 5. DevSecOps & Continuous Integration
-* [`📂 CI/CD Security Pipeline`](./.github/workflows/security_scan.yml) — GitHub Actions pipeline automatically scanning commits with Bandit and Checkov.
-* [`📂 Automated Secret Prevention (Gitleaks)`](./.gitleaks.toml) — Custom rulebase preventing hardcoded cloud API keys or RSA credentials from entering source control.
+GitHub Actions runs the Python unit tests and Bandit as blocking checks, validates Terraform formatting and syntax, and scans Terraform with Checkov in advisory mode while the baseline is being established. Gitleaks scans repository history for exposed secrets. The workflow grants the repository token read-only access.
 
 ---
-
-## 🚀 DevSecOps Pipeline Status
-This repository utilizes automated Static Application Security Testing (SAST). Every code commit triggers an automated pipeline that validates Terraform configurations against CIS benchmarks and parses Python code for security flaws.
-
----
-*Maintained by **[Mikael/Mikarl]** — Connect with me on [LinkedIn](https://www.linkedin.com/in/mikael-beck-b60999203) or explore my technical write-ups above.*
+Maintained by Mikael Beck.

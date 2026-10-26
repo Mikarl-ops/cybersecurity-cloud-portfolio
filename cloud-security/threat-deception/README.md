@@ -1,10 +1,13 @@
-# Project: Cloud Deception & Honeytoken Architecture
+# S3 canary alert example
 
-## 📋 Project Overview
-This module demonstrates threat deception techniques by deploying a decoy S3 bucket ("Canary Bucket") paired with AWS EventBridge rules. The asset acts as a honeypot; any attempt to read the file triggers an immediate high-severity security alert.
+## What it creates
 
-## 🛠️ STAR Analysis
-* **Situation:** Attackers who breach a perimeter often perform internal reconnaissance to look for credential files (`passwords.csv`, `keys.pem`).
-* **Task:** Implement an early-warning intrusion detection mechanism that alerts security teams when an unauthorized entity probes decoy assets.
-* **Action:** Authored Terraform IaC deploying a decoy S3 bucket (`corp-confidential-passwords-canary`) containing dummy credentials. Attached CloudWatch EventBridge rules to intercept `GetObject` API calls.
-* **Result:** Created an alert signal with near-zero false-positive rates, giving SOC operations immediate visibility into active lateral movement.
+Terraform creates a uniquely named private S3 bucket, a harmless marker object, encryption and versioning settings, and an EventBridge rule that publishes matching object-read events to an SNS topic. It does not store real credentials or subscribe a recipient to the topic.
+
+## CloudTrail prerequisite
+
+S3 object-level CloudTrail data events must be enabled for the canary bucket for GetObject activity to reach EventBridge. Data events may incur AWS charges. This project does not create or configure an account-wide CloudTrail trail. See the [AWS EventBridge tutorial](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-log-s3-data-events.html). Configure an SNS subscription to receive alerts and confirm delivery in an isolated lab account.
+
+## Safety and cleanup
+
+Review the Terraform plan before applying. Use an isolated AWS account and a unique prefix if you adapt this configuration. The bucket is not configured for force deletion, so remove its object and bucket deliberately after the exercise. The default AWS region is us-east-1.

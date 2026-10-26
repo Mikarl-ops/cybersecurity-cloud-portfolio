@@ -1,10 +1,6 @@
-# ==============================================================================
-# Filename: main.tf
-# Description: Terraform configuration deploying a secure, architecture-hardened
-#              VPC infrastructure baseline.
-# ==============================================================================
-
 terraform {
+  required_version = ">= 1.5.0"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -17,48 +13,43 @@ provider "aws" {
   region = var.aws_region
 }
 
-# 1. Provision the primary isolated VPC
 resource "aws_vpc" "secure_vpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
   enable_dns_support   = true
 
   tags = {
-    Name        = "Production-Secure-VPC"
-    Environment = "Production"
+    Name        = "Portfolio-Secure-VPC"
+    Environment = "Lab"
     ManagedBy   = "Terraform"
   }
 }
 
-# 2. Establish an isolated Private Subnet (No direct Internet exposure)
 resource "aws_subnet" "private_subnet" {
   vpc_id            = aws_vpc.secure_vpc.id
   cidr_block        = "10.0.1.0/24"
-  availability_zone = "${var.aws_region}a"
+  availability_zone = format("%sa", var.aws_region)
 
   tags = {
-    Name = "Isolated-Database-Tier"
+    Name = "Portfolio-Private-Subnet"
   }
 }
 
-# 3. Provision a hardened Security Group (Perimeter Firewall)
 resource "aws_security_group" "hardened_sg" {
-  name        = "secure-web-ingress-filter"
-  description = "Enforce strict ingress filters; deny all except corporate HTTPS traffic."
+  name        = "portfolio-web-ingress-filter"
+  description = "Example HTTPS ingress restriction for a future workload."
   vpc_id      = aws_vpc.secure_vpc.id
 
-  # Inbound: Allow HTTPS (TLS 1.3/1.2) ONLY from corporate trusted IP block
   ingress {
-    description = "Allow inbound HTTPS from Corporate Office"
+    description = "HTTPS from the configured trusted CIDR"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = [var.corporate_ip_range]
   }
 
-  # Outbound: Enforce restriction on outbound web traffic (Patching/Updates only)
   egress {
-    description = "Allow secure outbound web traffic"
+    description = "HTTPS egress example"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
@@ -66,6 +57,16 @@ resource "aws_security_group" "hardened_sg" {
   }
 
   tags = {
-    Name = "Hardened-Web-Firewall-Policy"
+    Name = "Portfolio-Hardened-Web-Firewall"
   }
+}
+
+output "vpc_id" {
+  value       = aws_vpc.secure_vpc.id
+  description = "ID of the example VPC."
+}
+
+output "private_subnet_id" {
+  value       = aws_subnet.private_subnet.id
+  description = "ID of the subnet with no internet-gateway route configured."
 }

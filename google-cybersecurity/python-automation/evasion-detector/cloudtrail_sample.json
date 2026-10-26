@@ -1,0 +1,14 @@
+{
+  "Records": [
+    {
+      "eventTime": "2026-10-24T12:00:00Z",
+      "eventSource": "cloudtrail.amazonaws.com",
+      "eventName": "StopLogging",
+      "userIdentity": {
+        "type": "IAMUser",
+        "arn": "arn:aws:iam::123456789012:user/synthetic-example"
+      },
+      "sourceIPAddress": "203.0.113.41"
+    }
+  ]
+}
