@@ -1,11 +1,11 @@
 """Query the NVD CVE API and return vulnerabilities with a high CVSS severity."""
 
 import json
-from urllib.error import HTTPError, URLError
+from http.client import HTTPException, HTTPSConnection
 from urllib.parse import urlencode
-from urllib.request import Request, urlopen
 
-API_URL = "https://services.nvd.nist.gov/rest/json/cves/2.0"
+API_HOST = "services.nvd.nist.gov"
+API_PATH = "/rest/json/cves/2.0"
 SEVERITY_RANK = {"LOW": 1, "MEDIUM": 2, "HIGH": 3, "CRITICAL": 4}
 
 
@@ -34,12 +34,22 @@ def fetch_critical_cves(keyword, max_results=20, min_severity="HIGH", timeout=15
         raise ValueError("min_severity must be LOW, MEDIUM, HIGH, or CRITICAL")
 
     query = urlencode({"keywordSearch": keyword, "resultsPerPage": max_results})
-    request = Request(f"{API_URL}?{query}", headers={"User-Agent": "CybersecurityPortfolio/1.0"})
+    # HTTPSConnection fixes the scheme and host; user input is confined to the encoded path query.
+    connection = HTTPSConnection(API_HOST, timeout=timeout)
     try:
-        with urlopen(request, timeout=timeout) as response:
-            data = json.loads(response.read().decode("utf-8"))
-    except (HTTPError, URLError, TimeoutError, json.JSONDecodeError) as exc:
+        connection.request(
+            "GET",
+            f"{API_PATH}?{query}",
+            headers={"User-Agent": "CybersecurityPortfolio/1.0"},
+        )
+        response = connection.getresponse()
+        if response.status != 200:
+            raise RuntimeError(f"NVD query failed: HTTP {response.status}")
+        data = json.loads(response.read().decode("utf-8"))
+    except (HTTPException, OSError, TimeoutError, json.JSONDecodeError) as exc:
         raise RuntimeError(f"NVD query failed: {exc}") from exc
+    finally:
+        connection.close()
 
     results = []
     for item in data.get("vulnerabilities", []):
